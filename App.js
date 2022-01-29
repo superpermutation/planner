@@ -1,21 +1,34 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, {Suspense} from 'react'
+import 'dayjs/locale/ru'
+import 'dayjs/locale/en'
+import 'dayjs/locale/es'
+import dayjs from 'dayjs'
+import calendar from 'dayjs/plugin/calendar'
+import weekOfYear from 'dayjs/plugin/weekOfYear'
+import {store, persistor} from './src/store'
+import {Provider} from 'react-redux'
+
+import {PersistGate} from 'redux-persist/integration/react'
+
+import {NavigationContainer} from '@react-navigation/native'
+import {Router} from './Router'
+
+import './src/i18n'
+import {ActivityIndicator} from 'react-native'
+
+dayjs.extend(calendar)
+dayjs.extend(weekOfYear)
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <NavigationContainer>
+          <Suspense fallback={<ActivityIndicator animating={true} />}>
+            <Router />
+          </Suspense>
+        </NavigationContainer>
+      </PersistGate>
+    </Provider>
+  )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
